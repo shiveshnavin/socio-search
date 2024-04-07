@@ -18,11 +18,13 @@ type User {
   subtitle: String
   summary: String
   image: String
+  thumbnail: String
   location: String
 
   linkedinDegree: String
   linkedinUrl: String
   linkedinId: String
+  linkedinUserName: String
   linkedinEducation: [LinkedinEducation]
 }
 
@@ -30,8 +32,8 @@ type LinkedinEducation {
   name: String
   course: String
   link: String
-  yearFrom: Int
-  yearTo: Int
+  yearFrom: String
+  yearTo: String
 }
 
 input LinkedInSearchParams {
@@ -39,7 +41,19 @@ input LinkedInSearchParams {
   city: String
 }
 `
+
 var resolvers = {
+  User: {
+    thumbnail: (parent, args, ctx, info) => {
+      return parent.image || parent.thumbnail || Linkedin.linkedinImage(parent.linkedinUserName)
+    },
+    image: (parent, args, ctx, info) => {
+      return Linkedin.linkedinImage(parent.linkedinUserName)
+    },
+    linkedinEducation: (parent, args, ctx, info) => {
+      return Linkedin.linkedinEducation(parent.linkedinId)
+    }
+  },
   Query: {
     linkedinUser: (parent, args, ctx, info) => Linkedin.linkedinUser(args.username),
     search: (parent, args, ctx, info) => {
