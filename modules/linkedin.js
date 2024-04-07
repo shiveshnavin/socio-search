@@ -85,14 +85,14 @@ module.exports = {
         }
         return dt
     },
-    search: function (text, city) {
+    search: function (text, city, skip = 0) {
         let LOCATIONS = {
             'delhi': '105282602,115918471,106187582',
             'bengaluru': '90009633,105214831',
             'india': '102713980'
         }
         let location = LOCATIONS[city] || city || '102713980';
-        let url = `https://www.linkedin.com/voyager/api/graphql?variables=(start:0,origin:FACETED_SEARCH,query:(keywords:${encodeURIComponent(text)},flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:geoUrn,value:List(${location})),(key:network,value:List(F)),(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.14bfbc3ae7fe6444020271ee652fadae`
+        let url = `https://www.linkedin.com/voyager/api/graphql?variables=(start:${skip},origin:FACETED_SEARCH,query:(keywords:${encodeURIComponent(text)},flagshipSearchIntent:SEARCH_SRP,queryParameters:List((key:geoUrn,value:List(${location})),(key:network,value:List(F)),(key:resultType,value:List(PEOPLE))),includeFiltersInResponse:false))&queryId=voyagerSearchDashClusters.14bfbc3ae7fe6444020271ee652fadae`
         return post(url).then(mapSearchRespToUser)
     }
 }

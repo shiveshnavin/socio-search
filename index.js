@@ -1,65 +1,83 @@
 var express = require("express")
+var ApolloServer = require('@apollo/server').ApolloServer
+var expressMiddleware = require('@apollo/server/express4').expressMiddleware;
+
 var { createHandler } = require("graphql-http/lib/use/express")
 var { buildSchema } = require("graphql")
 var { ruruHTML } = require("ruru/server")
 var Linkedin = require('./modules/linkedin.js')
-var schema = buildSchema(`
-  type Query {
-    search(linkedin: LinkedInSearchParams) : [User]
-    linkedinUser(username: String!) : User
-  }
 
-  type User {
-    name: String!
-    subtitle: String
-    summary: String
-    image: String
-    location: String
+var typeDefs = `#graphql
+type Query {
+  search(
+    linkedin: LinkedInSearchParams,
+    skip: Int
+  ): [User]
+  linkedinUser(username: String!) : User
+}
 
-    linkedinDegree: String
-    linkedinUrl: String
-    linkedinId: String
-    linkedinEducation: [LinkedinEducation]
-  }
+type User {
+  name: String!
+  subtitle: String
+  summary: String
+  image: String
+  location: String
 
-  type LinkedinEducation {
-    name: String
-    course: String
-    link: String
-    yearFrom: Int
-    yearTo: Int
-  }
+  linkedinDegree: String
+  linkedinUrl: String
+  linkedinId: String
+  linkedinEducation: [LinkedinEducation]
+}
 
-  input LinkedInSearchParams {
-    text: String!
-    city: String
-  }
-`)
+type LinkedinEducation {
+  name: String
+  course: String
+  link: String
+  yearFrom: Int
+  yearTo: Int
+}
 
-var root = {
-  linkedinUser: (obj) => Linkedin.linkedinUser(obj.username),
-  search(obj, ref, ctx, info) {
-    if (obj.linkedin) {
-      let li = obj.linkedin
-      return Linkedin.search(li.text, li.city)
+input LinkedInSearchParams {
+  text: String!
+  city: String
+}
+`
+var schema = buildSchema(typeDefs)
+
+var resolvers = {
+  Query: {
+    linkedinUser: (parent, args, ctx, info) => Linkedin.linkedinUser(args.username),
+    search: (parent, args, ctx, info) => {
+      if (args.linkedin) {
+        let li = args.linkedin
+        return Linkedin.search(li.text, li.city, args.skip)
+      }
+      return []
     }
-    return []
-  },
+  }
 }
 
 var app = express()
-app.all(
-  "/graphql",
-  createHandler({
-    schema: schema,
-    rootValue: root,
-  })
-)
 
 app.get("/", (_req, res) => {
   res.type("html")
   res.end(ruruHTML({ endpoint: "/graphql" }))
 })
 
-app.listen(4000)
-console.log("Running a GraphQL API server at http://localhost:4000/graphql")    
+// app.all(
+//   "/graphql",
+//   createHandler({
+//     schema: schema,
+//     rootValue: root,
+//   })
+// )
+
+let appoloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+})
+appoloServer.start().then(() => {
+  app.use('/graphql', express.json(), expressMiddleware(appoloServer));
+  app.listen(4000)
+  console.log("Running a GraphQL API server at http://localhost:4000/graphql")
+})
