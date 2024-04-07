@@ -33,3 +33,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+op.json
+yarn.lock
+client/package-lock.json
+modules/test.json
+modules/test.txt
+client/package-lock.json
