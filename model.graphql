@@ -1,0 +1,11 @@
+#graphql
+type Query {
+  users:[User]
+  User(id:String!): User
+}
+
+type User {
+  id: String
+  first_name: String
+  userName: String
+}

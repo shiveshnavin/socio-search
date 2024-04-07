@@ -3,21 +3,22 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ruruHTML } from "ruru/server";
 import path from "path";
+import axios from "axios";
+import fs from 'fs'
 
-var typeDefs = `#graphql
-type Query {
-  User: User
-}
-
-type User {
-  name: String
-}
-`
+var typeDefs = fs.readFileSync('model.graphql').toString()
 
 var resolvers = {
   User: {
+    userName: (parent, arg, ctx, info) => {
+      return parent.id + '-' + parent.first_name
+    }
   },
   Query: {
+    users: () =>
+      axios.get(`https://reqres.in/api/users`).then(d => d.data.data),
+    User: (parent, arg, ctx, info) =>
+      axios.get(`https://reqres.in/api/users/${arg.id}`).then(d => d.data.data)
   }
 }
 
@@ -35,14 +36,14 @@ ui.all('*',
 app.use('/ui', ui)
 app.get("/", (_req, res) => {
   res.type("html")
-  res.end(ruruHTML({ endpoint: "/graphql" }))
+  res.end(ruruHTML({ endpoint: "/graph" }))
 })
 let appoloServer = new ApolloServer({
   typeDefs,
   resolvers,
 })
 appoloServer.start().then(() => {
-  app.use('/graphql', express.json(), expressMiddleware(appoloServer));
+  app.use('/graph', express.json(), expressMiddleware(appoloServer));
   app.listen(4000)
   console.log("Running a GraphQL API server at http://localhost:4000/graphql")
 })

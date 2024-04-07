@@ -44,9 +44,7 @@ function Main() {
     console.log('route', route)
     let id = route.pathname.split('/')[1]
     setBottombarId(id)
-    setTimeout(() => {
-      router.navigate(route.unstable_globalHref)
-    }, 1000)
+    router.navigate(route.unstable_globalHref)
   }, [])
   return (
     <ThemeContext.Provider value={theme} >
@@ -57,11 +55,12 @@ function Main() {
         }}>
           <VPage>
             <VBox style={{
+              width: '100%',
+              height: '100%',
               margin: 0,
               padding: 0,
-              marginBottom: bottombarHeight
             }}>
-              <Stack />
+              <Slot />
             </VBox>
             <BottomNavBar
               onDimens={(w, h) => {
