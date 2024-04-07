@@ -14,9 +14,10 @@
     "axios": "^1.6.8",
     "express": "^4.19.2",
     "graphql": "^16.8.1",
-    "graphql-http": "^1.22.0",
     "jsonpath": "^1.1.1",
-    "ruru": "^2.0.0-beta.11"
+    "path": "^0.12.7",
+    "ruru": "^2.0.0-beta.11",
+    "typescript": "^5.4.4"
   },
   "devDependencies": {
     "ts-node-dev": "^2.0.0"

@@ -1,11 +1,16 @@
-var express = require("express")
-var ApolloServer = require('@apollo/server').ApolloServer
-var expressMiddleware = require('@apollo/server/express4').expressMiddleware;
-var { ruruHTML } = require("ruru/server")
+import express from "express";
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ruruHTML } from "ruru/server";
+import path from "path";
 
 var typeDefs = `#graphql
 type Query {
- 
+  User: User
+}
+
+type User {
+  name: String
 }
 `
 
@@ -17,6 +22,17 @@ var resolvers = {
 }
 
 var app = express()
+
+//see https://docs.expo.dev/more/expo-cli/#hosting-with-sub-paths
+//cd client && npx expo export
+
+
+let ui = express.Router()
+ui.all('*',
+  express.static(path.join(__dirname, 'client/dist')), (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/dist/index.html'))
+  })
+app.use('/ui', ui)
 app.get("/", (_req, res) => {
   res.type("html")
   res.end(ruruHTML({ endpoint: "/graphql" }))

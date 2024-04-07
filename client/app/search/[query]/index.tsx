@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import { useRouteInfo, useRouter } from "expo-router/build/hooks";
+import React, { useEffect } from "react";
 import { useContext } from "react";
 import { Center, TextView, ThemeContext, VPage } from "react-native-boxes";
 

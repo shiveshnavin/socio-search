@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Theme, ThemeContext, Colors, TextView } from "react-native-boxes";
 import { loadAsync } from "expo-font";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,10 +7,12 @@ import { Linking } from "react-native";
 import { Stack, router, useRouter } from 'expo-router';
 import { Slot } from 'expo-router';
 import { BottomNavBar, SimpleToolbar, VBox, VPage } from 'react-native-boxes';
+import { useRouteInfo } from "expo-router/build/hooks";
 
 
 function Main() {
   const [context, setContext] = useState(new ContextData())
+  const basePath = '/ui/'
   context.appname = 'client'
   const theme = new Theme('client', Object.assign(Colors, {
     background: '#F5F5F5'
@@ -37,6 +39,15 @@ function Main() {
   const router = useRouter()
   const [bottombarHeight, setBottomBarHeight] = useState(100)
   const [bottombarId, setBottombarId] = useState('/')
+  const route = useRouteInfo()
+  useEffect(() => {
+    console.log('route', route)
+    let id = route.pathname.split('/')[1]
+    setBottombarId(id)
+    setTimeout(() => {
+      router.navigate(route.unstable_globalHref)
+    }, 1000)
+  }, [])
   return (
     <ThemeContext.Provider value={theme} >
       <AppContext.Provider value={{ context, setContext }}>
@@ -58,11 +69,11 @@ function Main() {
               }}
               selectedId={bottombarId}
               onSelect={(id) => {
-                router.navigate(id)
+                router.navigate(basePath + id)
                 setBottombarId(id)
               }}
               options={[{
-                id: '/',
+                id: 'home',
                 icon: 'home',
                 title: 'Home'
               },
