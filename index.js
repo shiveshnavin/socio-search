@@ -1,9 +1,6 @@
 var express = require("express")
 var ApolloServer = require('@apollo/server').ApolloServer
 var expressMiddleware = require('@apollo/server/express4').expressMiddleware;
-
-var { createHandler } = require("graphql-http/lib/use/express")
-var { buildSchema } = require("graphql")
 var { ruruHTML } = require("ruru/server")
 var Linkedin = require('./modules/linkedin.js')
 
@@ -42,8 +39,6 @@ input LinkedInSearchParams {
   city: String
 }
 `
-var schema = buildSchema(typeDefs)
-
 var resolvers = {
   Query: {
     linkedinUser: (parent, args, ctx, info) => Linkedin.linkedinUser(args.username),
@@ -58,20 +53,10 @@ var resolvers = {
 }
 
 var app = express()
-
 app.get("/", (_req, res) => {
   res.type("html")
   res.end(ruruHTML({ endpoint: "/graphql" }))
 })
-
-// app.all(
-//   "/graphql",
-//   createHandler({
-//     schema: schema,
-//     rootValue: root,
-//   })
-// )
-
 let appoloServer = new ApolloServer({
   typeDefs,
   resolvers,
