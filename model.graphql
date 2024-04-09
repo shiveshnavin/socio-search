@@ -1,11 +1,25 @@
 #graphql
 type Query {
-  users:[User]
-  User(id:String!): User
+  users: [User]
+  User(id: String!): User
 }
 
 type User {
   id: String
   first_name: String
   userName: String
+  comments: [String]
+}
+
+enum Status {
+  SUCCESS
+  FAILURE
+}
+
+type UserComment {
+  id: String
+  comments: [String]
+}
+type Mutation {
+  commentOnUser(id: String, comment: String): UserComment!
 }

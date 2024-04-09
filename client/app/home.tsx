@@ -2,11 +2,11 @@ import { AppContext } from "@/components/Context";
 import { gql } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { useContext } from "react";
-import { Center, PressableView, Subtitle, TextView, ThemeContext, VBox, VPage } from "react-native-boxes";
+import { Avatar, Center, PressableView, Subtitle, TextView, ThemeContext, VBox, VPage } from "react-native-boxes";
 import { User } from '../../gen/model'
 import { router } from "expo-router";
 import { ScrollView } from "react-native";
-import KeyboardAvoidingScrollView from "react-native-boxes/src/Box";
+import KeyboardAvoidingScrollView, { HBox } from "react-native-boxes/src/Box";
 
 export default function HomeLayout() {
     const theme = useContext(ThemeContext)
@@ -20,6 +20,7 @@ export default function HomeLayout() {
                 id
                 first_name
                 userName
+
             }
         }
      `
@@ -40,22 +41,31 @@ export default function HomeLayout() {
                         users.map((u: User) => {
                             return (
                                 <PressableView
+                                    key={u.id}
                                     onPress={() => {
                                         router.navigate(`/search/${u.id}`)
                                     }}
                                     style={{
                                         width: '100%'
                                     }}>
-                                    <VBox key={u.id} style={{
+                                    <VBox style={{
                                         margin: theme.dimens.space.md,
                                         width: '98%',
                                         padding: theme.dimens.space.md,
                                         backgroundColor: theme.colors.forground,
                                         borderRadius: theme.dimens.space.md
                                     }}>
-                                        <Subtitle>{u.id}</Subtitle>
-                                        <Subtitle>{u.first_name}</Subtitle>
-                                        <Subtitle>{u.userName}</Subtitle>
+                                        <HBox style={{
+                                            alignItems: 'center'
+                                        }}>
+                                            <Avatar iconText={u.first_name?.substring(0, 2).toUpperCase()} />
+                                            <VBox>
+                                                <Subtitle style={{
+                                                    fontFamily: theme.fonts.Bold
+                                                }}>{u.userName}</Subtitle>
+                                                <TextView>{u.first_name}</TextView>
+                                            </VBox>
+                                        </HBox>
                                     </VBox>
                                 </PressableView>
                             )

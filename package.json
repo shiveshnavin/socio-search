@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node-dev --respawn --transpile-only index.ts",
+    "start": "ts-node-dev --ignore-watch client --watch *.graphql index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-ts": "node gql-ts.js"
+    "gen": "node gql-ts.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,8 +17,10 @@
     "express": "^4.19.2",
     "graphql": "^16.8.1",
     "jsonpath": "^1.1.1",
+    "multi-db-orm": "^2.1.11",
     "path": "^0.12.7",
     "ruru": "^2.0.0-beta.11",
+    "sqlite3": "^5.1.7",
     "typescript": "^5.4.4"
   },
   "devDependencies": {
