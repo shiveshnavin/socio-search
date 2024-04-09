@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node-dev --ignore-watch client --watch *.graphql index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gen": "node gql-ts.js"
+    "gen": "node gql-ts.js",
+    "build": "cd client && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +20,6 @@
     "jsonpath": "^1.1.1",
     "multi-db-orm": "^2.1.11",
     "path": "^0.12.7",
-    "ruru": "^2.0.0-beta.11",
     "sqlite3": "^5.1.7",
     "typescript": "^5.4.4"
   },

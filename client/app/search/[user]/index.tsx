@@ -51,7 +51,7 @@ export default function QueryPage() {
                 userName: `${user} not found`
             })
         })
-    }, [])
+    }, [user])
 
 
     

@@ -1,7 +1,6 @@
 import express from "express";
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import { ruruHTML } from "ruru/server";
 import path from "path";
 import axios from "axios";
 import fs from 'fs'
@@ -74,8 +73,7 @@ app.use('/ui', ui)
 
 // Remove in production
 app.get("/", (_req, res) => {
-  res.type("html")
-  res.end(ruruHTML({ endpoint: "/graph" }))
+  res.redirect('/graph')
 })
 
 const port = process.env.PORT || 4000
