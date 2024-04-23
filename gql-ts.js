@@ -1,9 +1,11 @@
-const { existsSync, readdirSync, mkdirSync } = require('fs')
+const { existsSync, mkdirSync } = require('fs')
 const path = require('path')
-
+const { mergeTypeDefs } = require('@graphql-tools/merge');
+const { loadFilesSync } = require('@graphql-tools/load-files')
 const generate = require('@graphql-codegen/cli').generate
+const { print } = require('graphql')
 
-async function doSomething(filePath) {
+module.exports = async function generateTsFromGraphQl(filePath) {
     if (!existsSync(filePath)) {
         console.warn(filePath, 'does not exists. skipping!')
         return
@@ -25,12 +27,23 @@ async function doSomething(filePath) {
     )
     console.log('Generated', name, 'to', opRel)
 }
-let files = readdirSync(__dirname)
 if (!existsSync(path.join(__dirname, 'gen'))) {
     mkdirSync(path.join(__dirname, 'gen'))
 }
-files.forEach(file => {
-    if (file.indexOf(".graphql") > -1) {
-        doSomething(path.join(__dirname, file))
-    }
+let outputPath = path.join(__dirname, 'gen/model.ts')
+const loadedFiles = loadFilesSync(`${__dirname}/**/*.graphql`)
+const typeDefs = mergeTypeDefs(loadedFiles)
+const printedTypeDefs = print(typeDefs)
+generate(
+    {
+        schema: printedTypeDefs,
+        generates: {
+            [outputPath]: {
+                plugins: ['typescript']
+            }
+        }
+    },
+    true
+).then(()=>{
+    console.log('Generated schema ts file', outputPath)
 })
