@@ -12,7 +12,10 @@ db.create("users_comments", {
   comments: `[]`
 }).then(() => console.log('DB Initialized'))
 
-const typeDefs = fs.readFileSync('model.graphql').toString()
+const typeDefs = [
+fs.readFileSync('model.graphql').toString(),
+// ... you other models
+]
 const resolvers = {
   User: {
     async comments(parent) {
