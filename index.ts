@@ -81,7 +81,12 @@ app.get("/", (_req, res) => {
 
 const port = process.env.PORT || 4000
 appoloServer.start().then(() => {
-  app.use('/graph', express.json(), expressMiddleware(appoloServer));
+  app.use('/graph', express.json(), expressMiddleware(appoloServer, {
+    context: async ({ req, res }) => ({
+      req,
+      res
+    }),
+  }));
   app.listen(port)
   console.log(`Running a GraphQL API server at http://localhost:${port}/graph`)
 })
