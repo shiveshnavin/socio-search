@@ -1,3 +1,27 @@
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+
+export const storage = new Storage({
+    size: 1000,
+    storageBackend: Platform.OS == 'web' ? window.localStorage : AsyncStorage,
+    defaultExpires: null,
+    enableCache: true,
+});
+
+
+export const getKeyAsync = async (key: string) => {
+    return await storage.load({
+        key
+    });
+};
+
+export const setKeyAsync = async (key: string, value: string) => {
+    return await storage.save({
+        key,
+        data: value
+    });
+};
 
 export function getNavParamsFromDeeplink(url: string) {
     let parts = url.split("/");
