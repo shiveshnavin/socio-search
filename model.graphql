@@ -1,25 +1,39 @@
 #graphql
 type Query {
-  users: [User]
-  User(id: String!): User
+  search(linkedin: SearchParams, instagram: SearchParams, skip: Int): [User]
+  linkedinUser(username: String!): User
+  instagramUser(username: String!): User
 }
 
 type User {
-  id: String
-  first_name: String
-  userName: String
-  comments: [String]
+  name: String!
+  subtitle: String
+  summary: String
+  image: String
+  thumbnail: String
+  location: String
+
+  igUserName: String
+  igUserId: String
+  igBio: String
+  igBasic: String
+
+  linkedinDegree: String
+  linkedinUrl: String
+  linkedinId: String
+  linkedinUserName: String
+  linkedinEducation: [LinkedinEducation]
 }
 
-enum Status {
-  SUCCESS
-  FAILURE
+type LinkedinEducation {
+  name: String
+  course: String
+  link: String
+  yearFrom: String
+  yearTo: String
 }
 
-type UserComment {
-  id: String
-  comments: [String]
-}
-type Mutation {
-  commentOnUser(id: String, comment: String): UserComment!
+input SearchParams {
+  text: String!
+  city: String
 }

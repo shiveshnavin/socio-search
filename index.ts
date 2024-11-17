@@ -5,6 +5,11 @@ import path from "path";
 import axios from "axios";
 import fs from 'fs'
 import { SQLiteDB } from "multi-db-orm";
+import Linkedin from './modules/linkedin.js'
+import Instagram from "./modules/instagram.js";
+
+var { ruruHTML } = require("ruru/server")
+
 
 const db = new SQLiteDB()
 db.create("users_comments", {
@@ -13,50 +18,57 @@ db.create("users_comments", {
 }).then(() => console.log('DB Initialized'))
 
 const typeDefs = [
-fs.readFileSync('model.graphql').toString(),
-// ... you other models
+  fs.readFileSync('model.graphql').toString(),
+  // ... you other models
 ]
 const resolvers = {
   User: {
-    async comments(parent) {
-      let user = await db.getOne("users_comments", { id: parent.id })
-      return user?.comments ? JSON.parse(user.comments) : []
+    igBio: (parent, args, ctx, info) => {
+      if (parent.igUserName)
+        return Instagram.getUser(parent.igUserName, parent).then(u => u.igBio)
     },
-    userName: (parent, arg, ctx, info) => {
-      return parent.id + '-' + parent.first_name
-    }
-  },
-  Mutation: {
-    async commentOnUser(parent, { id, comment }, context, info) {
-      let userComments = await db.getOne("users_comments", { id: id })
-      let isInsert = false
-      if (!userComments) {
-        isInsert = true
-        userComments = {
-          id: id,
-          comments: '[]'
-        }
+    igBasic: (parent, args, ctx, info) => {
+      if (parent.igUserName)
+        return Instagram.getUser(parent.igUserName, parent).then(u => u.igBasic)
+    },
+    thumbnail: (parent, args, ctx, info) => {
+      if (parent.igUserName != undefined) {
+        return parent.image || parent.thumbnail || Instagram.getUser(parent.igUserName, parent).then(u => u.image)
       }
-      userComments.comments = JSON.parse(userComments.comments)
-      userComments.comments.push(comment)
-      userComments.comments = JSON.stringify(userComments.comments)
-      if (isInsert)
-        await db.insert("users_comments", userComments)
+      if (parent.linkedinUserName)
+        return parent.image || parent.thumbnail || Linkedin.linkedinImage(parent.linkedinUserName)
+    },
+    image: (parent, args, ctx, info) => {
+      if (parent.igUserName != undefined) {
+        return Instagram.getUser(parent.igUserName, parent).then(u => u.image)
+      }
+      if (parent.linkedinUserName)
+        Linkedin.linkedinImage(parent.linkedinUserName)
+    },
+    linkedinEducation: (parent, args, ctx, info) => {
+      if (parent.linkedinId)
+        return Linkedin.linkedinEducation(parent.linkedinId)
       else
-        await db.update("users_comments", { id: id }, userComments)
-      return {
-        id,
-        comments: JSON.parse(userComments.comments)
-      }
+        return undefined
     }
   },
   Query: {
-    users: () =>
-      axios.get(`https://reqres.in/api/users?per_page=12`).then(d => d.data.data),
-    User: (parent, arg, ctx, info) =>
-      axios.get(`https://reqres.in/api/users/${arg.id}`).then(d => d.data.data)
+    instagramUser: (parent, args, ctx, info) => Instagram.getUser(args.username),
+    linkedinUser: (parent, args, ctx, info) => Linkedin.linkedinUser(args.username),
+    search: (parent, args, ctx, info) => {
+      if (args.linkedin) {
+        let li = args.linkedin
+        return Linkedin.search(li.text, li.city, args.skip)
+      }
+      if (args.instagram) {
+        let li = args.instagram
+        return Instagram.search(li.text)
+      }
+      return []
+    }
   }
 }
+
 const appoloServer = new ApolloServer({
   typeDefs,
   resolvers,
