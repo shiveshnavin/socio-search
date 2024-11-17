@@ -30,17 +30,17 @@ const resolvers = {
     },
     thumbnail: (parent, args, ctx, info) => {
       if (parent.igUserName != undefined) {
-        return parent.image || parent.thumbnail || Instagram.getUser(parent.igUserName, parent).then(u => u.image)
+        return parent.image || parent.thumbnail || Instagram.getUser(parent.igUserName, parent).then(u => u.profile_pic_url_hd || u.image)
       }
       if (parent.linkedinUserName)
         return parent.image || parent.thumbnail || Linkedin.linkedinImage(parent.linkedinUserName)
     },
     image: (parent, args, ctx, info) => {
       if (parent.igUserName != undefined) {
-        return Instagram.getUser(parent.igUserName, parent).then(u => u.image)
+        return Instagram.getUser(parent.igUserName, parent).then(u => (u.profile_pic_url_hd || u.image))
       }
       if (parent.linkedinUserName)
-        Linkedin.linkedinImage(parent.linkedinUserName)
+        return Linkedin.linkedinImage(parent.linkedinUserName)
     },
     linkedinEducation: (parent, args, ctx, info) => {
       if (parent.linkedinId)
