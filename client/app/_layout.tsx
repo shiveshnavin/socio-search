@@ -8,7 +8,7 @@ import { Stack, router, useRouter } from 'expo-router';
 import { Slot } from 'expo-router';
 import { BottomNavBar, SimpleToolbar, VBox, VPage } from 'react-native-boxes';
 import { useRouteInfo } from "expo-router/build/hooks";
-import KeyboardAvoidingScrollView from "react-native-boxes/src/Box";
+import { KeyboardAvoidingScrollView } from "react-native-boxes/";
 import { ApolloProvider } from "@apollo/client";
 
 
