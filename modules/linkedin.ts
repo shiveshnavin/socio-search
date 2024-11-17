@@ -54,7 +54,7 @@ function mapSearchRespToUser(obj) {
 // fs.writeFileSync('op.json', JSON.stringify(ops, undefined, 2))
 let bots = `http://bots.semibit.in/semibit-media/generic?bot_name=linkedin-scrper`
 
-async function post(apiUrl, pageUrl, baseUrl) {
+async function post(apiUrl, pageUrl?, baseUrl?) {
     let resp = await axios.post(baseUrl || bots, {
         "params": {
             "url": pageUrl || "https://www.linkedin.com/mynetwork",
@@ -66,7 +66,7 @@ async function post(apiUrl, pageUrl, baseUrl) {
     let data = body
     return data
 }
-module.exports = {
+const Linkedin = {
     linkedinImage: async function (userName) {
         let data = await post(undefined,
             `https://www.linkedin.com/in/${userName}/overlay/photo/`,
@@ -83,7 +83,7 @@ module.exports = {
     },
     linkedinUser: async function (userName) {
         let url = `https://www.linkedin.com/voyager/api/graphql?variables=(vanityName:${userName})&queryId=voyagerIdentityDashProfiles.e8511bf881819fb8156472959c87f423`
-        data = await post(url)
+        let data = await post(url)
         let urn = json.value(data, '$.data.data.identityDashProfilesByMemberIdentity')["*elements"][0]
         let user = mapGetUser(userName, data)
 
@@ -103,3 +103,4 @@ module.exports = {
         return post(url).then(mapSearchRespToUser)
     }
 }
+export default Linkedin

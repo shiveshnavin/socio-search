@@ -5,11 +5,8 @@ import path from "path";
 import axios from "axios";
 import fs from 'fs'
 import { SQLiteDB } from "multi-db-orm";
-import Linkedin from './modules/linkedin.js'
-import Instagram from "./modules/instagram.js";
-
-var { ruruHTML } = require("ruru/server")
-
+import Linkedin from './modules/linkedin'
+import Instagram from "./modules/instagram";
 
 const db = new SQLiteDB()
 db.create("users_comments", {

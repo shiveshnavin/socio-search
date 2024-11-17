@@ -14,12 +14,12 @@ function mapIGToUser(igu) {
     }
 }
 
-module.exports = {
+const Instagram = {
     search(search) {
         let url = `https://bots.semibit.in/semibit-media/instagram-bot/searchUser?username=${encodeURIComponent(search)}&tenant=birbankaa`
         return axios.get(url).then(rep => rep.data.map(mapIGToUser))
     },
-    async getUser(username, cachedUser) {
+    async getUser(username, cachedUser?) {
         if (cachedUser?.summary) {
             return cachedUser
         }
@@ -27,3 +27,5 @@ module.exports = {
         return axios.get(url).then(rep => (mapIGToUser(rep.data)))
     }
 }
+
+export default Instagram
