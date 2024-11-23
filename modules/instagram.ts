@@ -21,7 +21,7 @@ const Instagram = {
         return response
     },
     async getUser(username, cachedUser?) {
-        if (cachedUser?.igUserId) {
+        if (cachedUser?.image) {
             return cachedUser
         }
         let url = `http://oci.semibit.in:4040/semibit-media/instagram-bot/getUser?username=${encodeURIComponent(username)}&force=1`
