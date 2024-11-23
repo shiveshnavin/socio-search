@@ -36,7 +36,7 @@ function mapSearchRespToUser(obj) {
     let users = json.query(obj, '$.included[?(@.title)]')
     let ops = users.map(obj => {
         let url = json.value(obj, '$.navigationUrl')
-        return {
+        let result = {
             name: json.value(obj, '$.title.text'),
             subtitle: json.value(obj, '$.primarySubtitle.text'),
             summary: json.value(obj, '$.summary.text'),
@@ -48,6 +48,7 @@ function mapSearchRespToUser(obj) {
             linkedinUrl: url,
             linkedinId: obj?.entityUrn.replace("urn:li:fsd_entityResultViewModel:(", "").replace(",SEARCH_SRP,DEFAULT)", "")
         }
+        return result
     })
     return ops
 }
@@ -57,7 +58,7 @@ let bots = `http://bots.semibit.in/semibit-media/generic?bot_name=linkedin-scrpe
 async function post(apiUrl, pageUrl?, baseUrl?) {
     let resp = await axios.post(baseUrl || bots, {
         "params": {
-            "url": pageUrl || "https://www.linkedin.com/mynetwork",
+            "url": pageUrl || "https://www.linkedin.com/messaging",
             "api_url": apiUrl
         }
     })

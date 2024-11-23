@@ -15,16 +15,18 @@ function mapIGToUser(igu) {
 }
 
 const Instagram = {
-    search(search) {
+    async search(search) {
         let url = `http://oci.semibit.in:4040/semibit-media/instagram-bot/searchUser?username=${encodeURIComponent(search)}&force=1`
-        return axios.get(url).then(rep => rep.data.map(mapIGToUser))
+        let response = await axios.get(url).then(rep => rep.data.map(mapIGToUser))
+        return response
     },
     async getUser(username, cachedUser?) {
-        if (cachedUser?.summary) {
+        if (cachedUser?.igUserId) {
             return cachedUser
         }
-        let url = `http://oci.semibit.in:4040/semibit-media/instagram-bot/getUser?username=${encodeURIComponent(username)}`
-        return axios.get(url).then(rep => (mapIGToUser(rep.data)))
+        let url = `http://oci.semibit.in:4040/semibit-media/instagram-bot/getUser?username=${encodeURIComponent(username)}&force=1`
+        let response = await axios.get(url).then(rep => (mapIGToUser(rep.data)))
+        return response
     }
 }
 
