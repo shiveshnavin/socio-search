@@ -1,52 +1,46 @@
-import { AppContext } from "@/components/Context";
-import { gql } from "@apollo/client";
-import React, { useEffect, useState } from "react";
-import { useContext } from "react";
-import { Avatar, Center, PressableView, Subtitle, TextView, ThemeContext, VBox, VPage } from "react-native-boxes";
-import { User } from '../../gen/model'
-import { router } from "expo-router";
-import { ScrollView } from "react-native";
+import React, { } from "react";
+import { Center, TitleText, TransparentCenterToolbar, VPage } from "react-native-boxes";
 import { HBox, KeyboardAvoidingScrollView } from "react-native-boxes/src/Box";
+import { ThumbnailItem } from "../component/ThumbnailItem";
+import { useRouter } from "expo-router";
 
 export default function HomeLayout() {
-    const theme = useContext(ThemeContext)
-    const appContext = useContext(AppContext)
-    const graph = appContext.context.api.graph
-    const [users, setUsers] = useState([])
-    useEffect(() => {
-        let query = `
-        query Search( $username: String!) {
 
-            instagramUser(username: $username) {
-                name
-                subtitle
-                summary
-                image
-                thumbnail
-                location
-                igUserName
-                igUserId
-                igBio
-                igBasic
-            }
-         }
-     `
-        graph.query({
-            query: gql(query),
-            variables: {
-                "username": "deveshk1"
-            }
-        }).then((result: any) => {
-            setUsers(result.data.users)
-        });
-    }, [])
+    const router = useRouter()
+
     return (
         <VPage>
+            <TransparentCenterToolbar title="Socio Search" />
             <Center>
-                <TextView>Hello World!</TextView>
                 <KeyboardAvoidingScrollView style={{
                     width: '100%'
                 }}>
+
+                    <HBox style={{
+                        justifyContent: 'space-evenly'
+                    }}>
+                        <ThumbnailItem title="Linked search" icon="linkedin" onPress={() => {
+                            router.navigate('search?platform=linkedin')
+                        }} />
+                        <ThumbnailItem title="Find Linkedin user" icon="linkedin" />
+
+                    </HBox>
+
+                    <HBox style={{
+                        justifyContent: 'space-evenly'
+                    }}>
+                        <ThumbnailItem title="Instagram search" icon="instagram" />
+                        <ThumbnailItem title="Find Instagram user" icon="instagram" onPress={() => {
+                            router.navigate('instagram')
+                        }} />
+                    </HBox>
+
+                    <TitleText style={{
+                        marginTop: 20,
+                        textAlign: 'center'
+                    }}>Recent searches</TitleText>
+
+
 
 
                 </KeyboardAvoidingScrollView>

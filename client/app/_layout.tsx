@@ -70,30 +70,6 @@ function Main() {
               }}>
                 <Slot />
               </KeyboardAvoidingScrollView>
-              <BottomNavBar
-                onDimens={(w, h) => {
-                  setBottomBarHeight(h)
-                }}
-                selectedId={bottombarId}
-                onSelect={(id) => {
-                  router.navigate(basePath + id)
-                  setBottombarId(id)
-                }}
-                options={[{
-                  id: 'home',
-                  icon: 'home',
-                  title: 'Home'
-                },
-                {
-                  id: 'search',
-                  icon: 'search',
-                  title: 'Search'
-                },
-                {
-                  id: 'profile',
-                  icon: 'user',
-                  title: 'Profile'
-                }]} />
             </VPage>
           </SafeAreaView>
         </AppContext.Provider>

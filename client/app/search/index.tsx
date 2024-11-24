@@ -1,22 +1,34 @@
-import { Link, useRouter } from "expo-router";
-import React from "react";
-import { useContext } from "react";
-import { ButtonView, Center, TextView, ThemeContext, VPage } from "react-native-boxes";
+import { useLocalSearchParams } from "expo-router";
+import React, { useContext } from "react";
+import { ButtonView, CompositeTextInputView, TransparentCenterToolbar, VPage } from "react-native-boxes";
+import { AppContext } from "../../components/Context";
+import { gql } from "@apollo/client";
 
 
-export default function SearchPage() {
-    const theme = useContext(ThemeContext)
-    const router = useRouter()
+export default function Search() {
+
+    const { api } = useContext(AppContext).context
+    const { platform } = useLocalSearchParams()
+
+    api.graph.query({
+        query: gql`
+            
+        
+        `,
+        variables: {
+
+        }
+    })
+
     return (
-        <VPage>
-            <Center>
-                <TextView>Hello Search!</TextView>
-                <ButtonView
-                    onPress={() => {
-                        router.push(`/search/yolo?query=paneer`)
-                    }}
-                    text="Go to query" />
-            </Center>
+        <VPage style={{
+            padding: 10
+        }}>
+            <TransparentCenterToolbar title={"Search " + platform} />
+            <CompositeTextInputView placeholder="Enter keyword" />
+            <ButtonView text="Search" onPress={() => {
+
+            }} />
         </VPage>
-    );
+    )
 }
