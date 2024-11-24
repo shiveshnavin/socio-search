@@ -15,17 +15,27 @@ export default function HomeLayout() {
     const [users, setUsers] = useState([])
     useEffect(() => {
         let query = `
-        query GetUsers {
-            users {
-                id
-                first_name
-                userName
+        query Search( $username: String!) {
 
+            instagramUser(username: $username) {
+                name
+                subtitle
+                summary
+                image
+                thumbnail
+                location
+                igUserName
+                igUserId
+                igBio
+                igBasic
             }
-        }
+         }
      `
         graph.query({
             query: gql(query),
+            variables: {
+                "username": "deveshk1"
+            }
         }).then((result: any) => {
             setUsers(result.data.users)
         });

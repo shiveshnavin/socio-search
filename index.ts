@@ -2,7 +2,7 @@ import express from "express";
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import path from "path";
-import axios from "axios";
+import cors from "cors";
 import fs from 'fs'
 import { SQLiteDB } from "multi-db-orm";
 import Linkedin from './modules/linkedin'
@@ -75,7 +75,7 @@ const appoloServer = new ApolloServer({
 })
 
 const app = express()
-
+app.options("*", cors())
 
 //see https://docs.expo.dev/more/expo-cli/#hosting-with-sub-paths
 //cd client && npx expo export
@@ -91,7 +91,7 @@ app.get("/", (_req, res) => {
   res.redirect('/graph')
 })
 
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 8086
 appoloServer.start().then(() => {
   app.use('/graph', express.json(), expressMiddleware(appoloServer, {
     context: async ({ req, res }) => ({

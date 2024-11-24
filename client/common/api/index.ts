@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { Platform } from 'react-native';
 const client = new ApolloClient({
-    uri: 'http://192.168.0.110:4000/graph',
+    uri: Platform.OS == 'web' ? '/graph' : 'https://social-search.semibit.in',
     cache: new InMemoryCache(),
 });
 
