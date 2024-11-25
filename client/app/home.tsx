@@ -22,7 +22,9 @@ export default function HomeLayout() {
                         <ThumbnailItem title="Linked search" icon="linkedin" onPress={() => {
                             router.navigate('search?platform=linkedin')
                         }} />
-                        <ThumbnailItem title="Find Linkedin user" icon="linkedin" />
+                        <ThumbnailItem title="Find Linkedin user" icon="linkedin" onPress={() => {
+                            router.navigate('/linkedin')
+                        }} />
 
                     </HBox>
 

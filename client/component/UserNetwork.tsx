@@ -22,8 +22,8 @@ export function UserNetwork(props: { user: User }) {
                     <TitleText style={{
                         paddingTop: 15
                     }}>{user.name}</TitleText>
-                    <TextView>{user.igUserName} : {user.igBasic}</TextView>
-                    <Caption>{user.igBio}</Caption>
+                    <TextView>{user.igUserName || user.name} : {user.igBasic || user.subtitle}</TextView>
+                    <Caption>{user.igBio || user.summary}</Caption>
                 </VBox>
             </CardView>
 

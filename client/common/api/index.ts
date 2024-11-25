@@ -2,15 +2,40 @@ import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client
 import { Platform } from 'react-native';
 import { User } from '../../../gen/model';
 const client = new ApolloClient({
-    uri: Platform.OS == 'web' ? '/graph' : 'http://192.168.1.8:3000/graph',
+    uri: Platform.OS == 'web' ? '/graph' : 'https://socio.semibit.in/graph',
     cache: new InMemoryCache(),
 });
 
 export class Api {
     graph = client
 
+    linkedinFindByUsername(username: string) {
+        return this.graph.query({
+            fetchPolicy:"cache-first",
+            query: gql`query LinkedinUser($username: String!) {
+                            linkedinUser(username: $username) {
+                                name
+                                subtitle
+                                summary
+                                image
+                                hdImage
+                                thumbnail
+                                location
+                                igUserName
+                                igUserId
+                                igBio
+                                igBasic
+                            }
+                        }`,
+            variables: {
+                username
+            }
+        }).then(response => response.data.linkedinUser as User)
+    }
+
     igFindByUsername(username: string) {
         return this.graph.query({
+            fetchPolicy:"cache-first",
             query: gql`query InstagramUser($username: String!) {
                 instagramUser(username: $username) {
                     name
