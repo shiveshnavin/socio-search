@@ -22,6 +22,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "in.semibit.socio",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
