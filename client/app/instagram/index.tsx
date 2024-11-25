@@ -39,6 +39,7 @@ export default function Instagram() {
                             .then(setUser)
                             .then(() => { setError(undefined); })
                             .catch(e => {
+                                setUser(undefined)
                                 setError(getGraphErrorMessage(e))
                             })
                 }}
