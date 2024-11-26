@@ -34,7 +34,7 @@ export default function LinkedInUser() {
             <TransparentCenterToolbar title={username as string} />
             {
                 error != undefined && (
-                    <AlertMessage text={error} type="critical"/>
+                    <AlertMessage text={error} type="critical" />
                 )
             }
             {
@@ -44,7 +44,7 @@ export default function LinkedInUser() {
             }
             {
                 user && (
-                    <UserNetwork user={user} />
+                    <UserNetwork user={user} targetPlatform="instagram" />
                 )
             }
         </VPage>
