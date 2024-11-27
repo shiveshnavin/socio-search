@@ -5,8 +5,8 @@ on:
     inputs:
       repo_url:
         description: 'Repository URL'
-        required: true
-        default: 'https://github.com/fork/repo'
+        required: false
+        default: 'https://github.com/shiveshnavin/socio-search'
       profile:
         description: 'Build Profile'
         required: false
