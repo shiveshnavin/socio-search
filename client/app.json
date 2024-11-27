@@ -35,6 +35,15 @@
     "plugins": [
       "expo-router",
       "expo-localization"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d8ae5fb9-ac54-4730-a584-9b7c48063ec4"
+      }
+    },
+    "owner": "shiveshnavin"
   }
 }
