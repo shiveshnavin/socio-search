@@ -1,5 +1,5 @@
 import React from "react"
-import { Api } from "@/common/api"
+import { Api } from "../common/api"
 
 export class ContextData {
     appname: string = ''
