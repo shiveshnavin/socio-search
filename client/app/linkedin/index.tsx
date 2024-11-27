@@ -26,7 +26,11 @@ export default function Instagram() {
                     margin: 10
                 }}
                 onIconPress={() => {
-                    router.navigate(`linkedin/${username}`)
+                    let _username = username
+                    if(_username?.indexOf("linkedin")){
+                        _username = _username.split("/")[4]
+                    }
+                    router.navigate(`linkedin/${_username}`)
                 }}
                 icon="search"
                 placeholder="Enter username" onChangeText={setUserName} />

@@ -28,7 +28,7 @@ export default function InstagramUser() {
         graph.query({
             query: gql(query),
             variables: {
-                "username": "deveshk1"
+                "username": "username"
             }
         }).then((result: any) => {
             setUsers(result.data.users)
