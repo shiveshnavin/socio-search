@@ -145,7 +145,8 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                 users === undefined && <ButtonView text="Begin search"
                     style={{
                         zIndex: 1000,
-                        padding: theme.dimens.space.lg
+                        padding: theme.dimens.space.lg,
+                        marginBottom: 50
                     }}
                     onPress={() => {
                         if (user && user.name) {
@@ -155,17 +156,21 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
             }
 
 
-            <HBox style={{
-                backgroundColor: 'transparent',
-                position: 'fixed',
-                bottom: 50,
-                left: 0,
-                width: '100%',
-                justifyContent: 'space-between'
-            } as any}>
-                <ButtonView text="Next" icon="arrow-left" onPress={backPress} />
-                <RightIconButton text="Prev" icon="arrow-right" onPress={nextPress} />
-            </HBox>
+            {
+                users !== undefined &&
+
+                <HBox style={{
+                    backgroundColor: 'transparent',
+                    position: 'fixed',
+                    bottom: 50,
+                    left: 0,
+                    width: '100%',
+                    justifyContent: 'space-between'
+                } as any}>
+                    <ButtonView text="Next" icon="arrow-left" onPress={backPress} />
+                    <RightIconButton text="Prev" icon="arrow-right" onPress={nextPress} />
+                </HBox>
+            }
         </VBox>
     )
 }

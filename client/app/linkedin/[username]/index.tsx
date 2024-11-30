@@ -32,7 +32,7 @@ export default function LinkedInUser() {
             padding: 10,
             paddingTop: 0,
         }}>
-            <TransparentCenterToolbar title={username} />
+            <TransparentCenterToolbar title={username as string} />
             {
                 error != undefined && (
                     <AlertMessage text={error} type="critical" />
