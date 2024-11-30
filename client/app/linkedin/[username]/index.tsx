@@ -40,7 +40,7 @@ export default function LinkedInUser() {
             }
             {
                 user === null && <Spinner size="large" style={{
-                    margin: 30
+                    margin: 50,
                 }} />
             }
             {
