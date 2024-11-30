@@ -5,7 +5,7 @@ import { AlertMessage, ButtonView, Caption, CardView, Center, HBox, Icon, RightI
 import { Image } from "react-native";
 import * as Linking from 'expo-linking';
 import { AppContext } from "../components/Context";
-import { getGraphErrorMessage } from "../common/api";
+import { Api, getGraphErrorMessage } from "../common/api";
 import { router } from "expo-router";
 
 export function UserNetwork(props: { user: User, targetPlatform: string }) {
@@ -115,6 +115,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                         return (
                             <CardView>
                                 <UserCard
+                                    api={api}
                                     collapsed={collapsed}
                                     user={item.item} platform={user.igUserId ? 'instagram' : 'linkedin'} />
                             </CardView>
@@ -161,8 +162,17 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
     )
 }
 
-export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) => void, collapsed?: boolean, collapsable?: boolean }) {
-    const { user } = props
+export function UserCard(props: {
+    user: User,
+    api: Api,
+    onCollapseClick?: (show: boolean) => void, collapsed?: boolean, collapsable?: boolean
+}) {
+    const [fullyLoaded, setFullyLoaded] = useState(false)
+    const [user, setUser] = useState(props.user)
+    useEffect(() => {
+        setUser(props.user)
+    }, [props.user])
+    const [loading, setLoading] = useState(false)
     const platform = user.platform
     const theme = useContext(ThemeContext)
     const [collapsed, setCollapsed] = useState(props.collapsed)
@@ -185,12 +195,30 @@ export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) 
 
     const openExternal = useCallback(() => {
         console.log("Linking", platform, user?.igUserName || user?.linkedinUserName)
-        if (platform == 'instagram') {
+        if (platform == 'instagram' && user?.igUserName) {
             Linking.openURL(`https://www.instagram.com/${user?.igUserName}`)
-        } else if (platform == 'linkedin') {
+        } else if (platform == 'linkedin' && user?.linkedinUserName) {
             Linking.openURL(`https://www.linkedin.com/in/${user?.linkedinUserName}`)
         }
     }, [])
+
+    function loadFull() {
+        if (platform == 'instagram') {
+            setLoading(true)
+            props.api?.igFindByUsername(user.igUserName)
+                .then((user) => {
+                    setUser(user)
+                    setFullyLoaded(true)
+                })
+                .catch(e => {
+                    console.warn(e)
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
+
+        }
+    }
     return (
         <VBox>
 
@@ -206,6 +234,11 @@ export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) 
                     }}>{user.name}</TitleText>
                 </Pressable>
                 {
+                    loading && (
+                        <Spinner size={"small"} />
+                    )
+                }
+                {
                     props.collapsable && (
                         <Icon name={!collapsed ? "eye" : "eye-slash"} onPress={() => {
                             if (props.onCollapseClick) {
@@ -219,9 +252,10 @@ export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) 
                     )
                 }
 
+
             </HBox>
             {
-                !collapsed && (
+                (!collapsed || fullyLoaded) && (
                     <>
                         <TextView>{user.igUserName || user.name} : {user.igBasic || user.subtitle}</TextView>
                         <Caption>{user.igBio || user.summary}</Caption>
@@ -229,7 +263,7 @@ export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) 
                 )
             }
 
-            <Pressable onPress={openExternal}>
+            <Pressable onPress={loadFull}>
 
                 {
                     Platform.OS == 'web' && platform == 'instagram'

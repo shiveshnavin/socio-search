@@ -24,7 +24,7 @@
     "android": {
       "package": "in.semibit.socio",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.jpeg",
         "backgroundColor": "#ffffff"
       }
     },

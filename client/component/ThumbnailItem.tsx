@@ -5,7 +5,7 @@ import { CardView, Center, Icon, PressableView, TextView } from "react-native-bo
 export function ThumbnailItem(props: { title: string, icon: string } & PressableProps) {
     return (
         <PressableView {...props} style={{
-            width: '50%',
+            width: '100%',
         }}>
             <CardView style={{
                 height: 80

@@ -1,8 +1,9 @@
 import React, { } from "react";
-import { Center, TitleText, TransparentCenterToolbar, VPage } from "react-native-boxes";
-import { HBox, KeyboardAvoidingScrollView } from "react-native-boxes/src/Box";
+import { Center, Icon, TextView, TitleText, TransparentCenterToolbar, VPage } from "react-native-boxes";
+import { HBox, KeyboardAvoidingScrollView, VBox } from "react-native-boxes";
 import { ThumbnailItem } from "../component/ThumbnailItem";
 import { useRouter } from "expo-router";
+import { Image } from 'react-native'
 
 export default function HomeLayout() {
 
@@ -11,42 +12,38 @@ export default function HomeLayout() {
     return (
         <VPage>
             <TransparentCenterToolbar title="Socio Search" />
-            <Center>
-                <KeyboardAvoidingScrollView style={{
-                    width: '100%'
-                }}>
-
-                    <HBox style={{
-                        justifyContent: 'space-evenly'
-                    }}>
-                        <ThumbnailItem title="Linked search" icon="linkedin" onPress={() => {
-                            router.navigate('search?platform=linkedin')
-                        }} />
-                        <ThumbnailItem title="Find Linkedin user" icon="linkedin" onPress={() => {
-                            router.navigate('/linkedin')
-                        }} />
-
-                    </HBox>
-
-                    <HBox style={{
-                        justifyContent: 'space-evenly'
-                    }}>
-                        <ThumbnailItem title="Instagram search" icon="instagram" />
-                        <ThumbnailItem title="Find Instagram user" icon="instagram" onPress={() => {
-                            router.navigate('instagram')
-                        }} />
-                    </HBox>
-
-                    <TitleText style={{
-                        marginTop: 20,
-                        textAlign: 'center'
-                    }}>Recent searches</TitleText>
 
 
+            <Center style={{
+                paddingTop: 100
+            }}>
+                <Image source={require('../assets/icon.jpeg')}
 
+                    style={{
+                        borderRadius: 10,
+                        height: 220,
+                        width: 220
+                    }} />
+                <TextView style={{
+                    padding: 20,
+                    textAlign: 'center'
+                }}>Socio is a platform where you can find users on different social media websites starting with any one</TextView>
 
-                </KeyboardAvoidingScrollView>
             </Center>
+            <Center style={{
+                width: '100%',
+                position: 'absolute',
+                bottom: 0,
+                paddingBottom: 50
+            }}>
+                <ThumbnailItem title="Find by linkedin id" icon="linkedin" onPress={() => {
+                    router.navigate('/linkedin')
+                }} />
+                <ThumbnailItem title="Find by instagram id" icon="instagram" onPress={() => {
+                    router.navigate('instagram')
+                }} />
+            </Center>
+
         </VPage>
     );
 }
