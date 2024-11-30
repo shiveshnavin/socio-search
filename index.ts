@@ -20,6 +20,13 @@ const typeDefs = [
 ]
 const resolvers = {
   User: {
+    platform: (parent) => {
+      if (parent.igUserName || parent.igUserId) {
+        return "instagram"
+      }
+      return "linkedin"
+    },
+
     igBio: (parent, args, ctx, info) => {
       if (parent.igUserName)
         return Instagram.getUser(parent.igUserName, parent).then(u => u.igBio)

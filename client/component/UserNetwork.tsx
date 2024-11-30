@@ -1,11 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { User } from '../../gen/model'
-import { FlatList, Pressable } from 'react-native'
-import { AlertMessage, ButtonView, Caption, CardView, Center, Icon, Spinner, Subtitle, TextView, ThemeContext, TitleText, VBox } from "react-native-boxes";
+import { FlatList, Platform, Pressable } from 'react-native'
+import { AlertMessage, ButtonView, Caption, CardView, Center, HBox, Icon, Spinner, Subtitle, TextView, ThemeContext, TitleText, VBox } from "react-native-boxes";
 import { Image } from "react-native";
 import * as Linking from 'expo-linking';
 import { AppContext } from "../components/Context";
 import { getGraphErrorMessage } from "../common/api";
+import { router } from "expo-router";
 
 export function UserNetwork(props: { user: User, targetPlatform: string }) {
     const user = props.user
@@ -13,6 +14,19 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
     const [users, setUsers] = useState<User[] | null | undefined>(undefined)
     const [error, setError] = useState<string | undefined>(undefined)
     const api = useContext(AppContext).context.api
+    const [index, setIndex] = useState(0)
+
+    const onViewableItemsChanged = ({
+        viewableItems,
+    }) => {
+        let idx = viewableItems[0]?.index || 0
+        console.log('scroleld to ', idx)
+        setIndex(idx)
+    };
+    const viewabilityConfigCallbackPairs = useRef([
+        { onViewableItemsChanged },
+    ]);
+
     const theme = useContext(ThemeContext)
     function findUser(username: string, targetPlatform: string) {
         if (targetPlatform == 'instagram') {
@@ -26,38 +40,83 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
         }
     }
 
+    const flatListRef = useRef(FlatList);
+    const nextPress = () => {
+        console.log('nextpress', index)
+        if (index <= (users?.length as number - 2)) {
+            flatListRef?.current?.scrollToIndex({
+                animated: true,
+                index: index + 1
+            });
+            setIndex((ix) => {
+                return ix + 1
+            })
+        }
+    };
+    const backPress = () => {
+        console.log('backPress', index)
+
+        if (index >= 1) {
+            flatListRef?.current?.scrollToIndex({
+                animated: true,
+                index: index - 1
+            });
+
+            setIndex((ix) => {
+                return ix - 1
+            })
+        }
+    };
+    const [collapsed, setCollapsed] = useState(false)
+
     return (
-        <VBox>
+        <VBox style={{
+            height: '100%'
+        }}>
+
+            {
+                user && (
+                    <VBox style={{
+                        paddingLeft: theme.dimens.space.lg,
+                        paddingRight: theme.dimens.space.lg
+                    }}>
+                        <UserCard user={user}
+                            collapsable={true}
+                            collapsed={collapsed}
+                            onCollapseClick={(show) => {
+                                setCollapsed(c => !c)
+                            }} />
+                    </VBox>
+                )
+            }
             {
                 error && (
                     <AlertMessage text={error} type="critical" />
                 )
             }
 
-            {
-                user && (
-                    <VBox style={{
-                        padding: theme.dimens.space.lg
-                    }}>
-                        <UserCard user={user} />
-                    </VBox>
-                )
-            }
 
             {
                 users === null && <Spinner size={40} />
             }
             {
                 <FlatList
-                    style={{
-                        marginBottom: 50
+                    viewabilityConfigCallbackPairs={
+                        viewabilityConfigCallbackPairs.current
+                    }
+                    viewabilityConfig={{
+                        itemVisiblePercentThreshold: 50
                     }}
+                    ref={flatListRef}
+
                     keyExtractor={(i) => "" + i.igUserId}
                     renderItem={(item: any) => {
-                        console.log('rendering', item.item)
+                        // console.log('rendering', item.item)
                         return (
                             <CardView>
-                                <UserCard user={item.item} />
+                                <UserCard
+                                    collapsed={collapsed}
+                                    user={item.item} platform={user.igUserId ? 'instagram' : 'linkedin'} />
                             </CardView>
                         )
                     }} data={users || []} />
@@ -77,6 +136,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
             {
                 users === undefined && <ButtonView text="Begin search"
                     style={{
+                        zIndex: 1000,
                         padding: theme.dimens.space.lg
                     }}
                     onPress={() => {
@@ -85,12 +145,31 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                         }
                     }} />
             }
+
+            <HBox style={{
+                backgroundColor: 'transparent',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                justifyContent: 'space-between'
+            }}>
+                <ButtonView icon="arrow-left" onPress={backPress} />
+                <ButtonView icon="arrow-right" onPress={nextPress} />
+            </HBox>
         </VBox>
     )
 }
 
-export function UserCard({ user, platform }: { user: User, platform?: string }) {
+export function UserCard(props: { user: User, onCollapseClick?: (show: boolean) => void, collapsed?: boolean, collapsable?: boolean }) {
+    const { user } = props
+    const platform = user.platform
     const theme = useContext(ThemeContext)
+    const [collapsed, setCollapsed] = useState(props.collapsed)
+    useEffect(() => {
+        if (props.collapsed != undefined)
+            setCollapsed(props.collapsed)
+    }, [props.collapsed])
     if (!user) {
         return (
             <Center style={{
@@ -103,35 +182,87 @@ export function UserCard({ user, platform }: { user: User, platform?: string }) 
             </Center>
         )
     }
+
+    const openExternal = useCallback(() => {
+        console.log("Linking", platform, user?.igUserName || user?.linkedinUserName)
+        if (platform == 'instagram') {
+            Linking.openURL(`https://www.instagram.com/${user?.igUserName}`)
+        } else if (platform == 'linkedin') {
+            Linking.openURL(`https://www.linkedin.com/in/${user?.linkedinUserName}`)
+        }
+    }, [])
     return (
         <VBox>
 
-            <Pressable onPress={() => {
-                console.log("Linking", user?.igUserName || user?.linkedinUserName)
-                if (platform == 'instagram') {
-                    Linking.openURL(`https://www.instagram.com/${user?.igUserName}`)
-                } else if (platform == 'linkedin') {
-                    Linking.openURL(`https://www.linkedin.com/in/${user?.linkedinUserName}`)
-                }
-            }}>
-                <TitleText style={{
-                    paddingTop: 15,
-                    color: theme.colors.accent
-                }}>{user.name}</TitleText>
-            </Pressable>
-            <TextView>{user.igUserName || user.name} : {user.igBasic || user.subtitle}</TextView>
-            <Caption>{user.igBio || user.summary}</Caption>
-            <Image
-                style={{
+            <HBox style={{
+                alignItems: 'center',
+                justifyContent: 'space-between'
 
-                    minHeight: 250,
-                    width: '100%',
-                    borderRadius: 10
-                }}
-                source={{
-                    // uri: 'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f'
-                    uri: (user.hdImage || user.image || user.thumbnail) as string
-                }} />
+            }}>
+                <Pressable onPress={openExternal}>
+                    <TitleText style={{
+                        paddingTop: 15,
+                        color: theme.colors.accent
+                    }}>{user.name}</TitleText>
+                </Pressable>
+                {
+                    props.collapsable && (
+                        <Icon name={!collapsed ? "eye" : "eye-slash"} onPress={() => {
+                            if (props.onCollapseClick) {
+                                props.onCollapseClick(!collapsed)
+                                return
+                            }
+                            setCollapsed((v) => {
+                                return !v
+                            })
+                        }} />
+                    )
+                }
+
+            </HBox>
+            {
+                !collapsed && (
+                    <>
+                        <TextView>{user.igUserName || user.name} : {user.igBasic || user.subtitle}</TextView>
+                        <Caption>{user.igBio || user.summary}</Caption>
+                    </>
+                )
+            }
+
+            <Pressable onPress={openExternal}>
+
+                {
+                    Platform.OS == 'web' && platform == 'instagram'
+                        ?
+                        (
+                            <iframe
+                                src={(user.hdImage || user.image || user.thumbnail) as string}
+                                style={{
+                                    border: 'none',
+                                    width: '100%',
+                                    borderRadius: 10,
+                                    height: 'auto',
+                                    overflow: 'hidden',
+                                }}
+                            />
+                        )
+                        :
+                        (
+                            <Image
+                                style={{
+
+                                    minHeight: 250,
+                                    width: '100%',
+                                    borderRadius: 10
+                                }}
+                                source={{
+                                    // uri: 'https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f'
+                                    uri: (user.hdImage || user.image || user.thumbnail) as string
+                                }} />
+                        )
+                }
+            </Pressable>
+
         </VBox>
     )
 }

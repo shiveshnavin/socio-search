@@ -32,6 +32,7 @@ export class Api {
               igUserId
               igBio
               igBasic
+              platform
             }
           }
         `,
@@ -62,6 +63,7 @@ export class Api {
               igUserId
               igBio
               igBasic
+              platform
             }
           }
         `,
@@ -90,6 +92,7 @@ export class Api {
               igUserId
               igBio
               igBasic
+              platform
             }
           }
         `,

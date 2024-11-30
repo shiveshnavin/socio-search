@@ -13,6 +13,7 @@ type User {
   hdImage: String
   thumbnail: String
   location: String
+  platform: String
 
   igUserName: String
   igUserId: String

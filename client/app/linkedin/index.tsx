@@ -1,20 +1,20 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { ButtonView, CompositeTextInputView, Spinner, TransparentCenterToolbar, VPage } from "react-native-boxes";
-import { AppContext } from "../../components/Context";
-import { gql } from "@apollo/client";
-import { User } from "../../../gen/model";
-import { UserNetwork } from "../../component/UserNetwork";
-import { getGraphErrorMessage } from "../../common/api";
+import { useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { CompositeTextInputView, TransparentCenterToolbar, VPage } from "react-native-boxes";
 
 
 export default function Instagram() {
     const [username, setUserName] = useState("")
     const router = useRouter()
-  
-    useEffect(() => {
 
+    const start = useCallback(() => {
+        let _username = username
+        if (_username?.indexOf("linkedin") > -1) {
+            _username = _username.split("/")[4]
+        }
+        router.navigate(`linkedin/${_username?.toLocaleLowerCase()}`)
     }, [])
+
 
     return (
         <VPage style={{
@@ -22,16 +22,12 @@ export default function Instagram() {
         }}>
             <TransparentCenterToolbar title={"Find Instagram user"} />
             <CompositeTextInputView
+                returnKeyType="search"
+                onDone={start}
                 style={{
                     margin: 10
                 }}
-                onIconPress={() => {
-                    let _username = username
-                    if(_username?.indexOf("linkedin")){
-                        _username = _username.split("/")[4]
-                    }
-                    router.navigate(`linkedin/${_username}`)
-                }}
+                onIconPress={start}
                 icon="search"
                 placeholder="Enter username" onChangeText={setUserName} />
 

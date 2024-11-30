@@ -54,7 +54,7 @@ export default function Instagram() {
             }
             {
                 user && (
-                    <UserNetwork user={user} />
+                    <UserNetwork user={user} targetPlatform="instagram" />
                 )
             }
         </VPage>

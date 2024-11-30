@@ -29,9 +29,9 @@ export default function LinkedInUser() {
 
     return (
         <VPage style={{
-            padding: 10
+            padding: 10,
+            paddingTop: 0,
         }}>
-            <TransparentCenterToolbar title={username as string} />
             {
                 error != undefined && (
                     <AlertMessage text={error} type="critical" />
