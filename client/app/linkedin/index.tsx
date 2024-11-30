@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { CompositeTextInputView, TransparentCenterToolbar, VPage } from "react-native-boxes";
+import { ButtonView, CompositeTextInputView, TransparentCenterToolbar, VBox, VPage } from "react-native-boxes";
 
 
 export default function Instagram() {
@@ -18,11 +18,12 @@ export default function Instagram() {
 
     return (
         <VPage style={{
-            padding: 10
+            padding: 10,
         }}>
             <TransparentCenterToolbar title={"Find Instagram user"} />
+
             <CompositeTextInputView
-                returnKeyType="search"
+                returnKeyType="done"
                 onDone={start}
                 style={{
                     margin: 10
@@ -30,6 +31,13 @@ export default function Instagram() {
                 onIconPress={start}
                 icon="search"
                 placeholder="Enter username" onChangeText={setUserName} />
+            <ButtonView text="Search" onPress={start} style={{
+                width: '100%',
+                position: 'absolute',
+                bottom: 10,
+                left: 5,
+                right: 0,
+            }} />
 
         </VPage>
     )

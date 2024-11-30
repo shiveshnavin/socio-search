@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { User } from '../../gen/model'
 import { FlatList, Platform, Pressable } from 'react-native'
-import { AlertMessage, ButtonView, Caption, CardView, Center, HBox, Icon, Spinner, Subtitle, TextView, ThemeContext, TitleText, VBox } from "react-native-boxes";
+import { AlertMessage, ButtonView, Caption, CardView, Center, HBox, Icon, RightIconButton, Spinner, Subtitle, TextView, ThemeContext, TitleText, VBox } from "react-native-boxes";
 import { Image } from "react-native";
 import * as Linking from 'expo-linking';
 import { AppContext } from "../components/Context";
@@ -149,13 +149,13 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
             <HBox style={{
                 backgroundColor: 'transparent',
                 position: 'fixed',
-                bottom: 0,
+                bottom: 50,
                 left: 0,
                 width: '100%',
                 justifyContent: 'space-between'
             }}>
-                <ButtonView icon="arrow-left" onPress={backPress} />
-                <ButtonView icon="arrow-right" onPress={nextPress} />
+                <ButtonView text="Next" icon="arrow-left" onPress={backPress} />
+                <RightIconButton text="Prev" icon="arrow-right" onPress={nextPress} />
             </HBox>
         </VBox>
     )
