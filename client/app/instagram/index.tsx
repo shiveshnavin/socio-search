@@ -27,7 +27,7 @@ export default function Instagram() {
         <VPage style={{
             padding: 10
         }}>
-            <TransparentCenterToolbar title={"Find Instagram user"} />
+            <TransparentCenterToolbar title={"Find by Instagram ID"} />
             <CompositeTextInputView
                 style={{
                     margin: 10

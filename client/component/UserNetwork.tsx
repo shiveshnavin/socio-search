@@ -18,7 +18,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
 
     const onViewableItemsChanged = ({
         viewableItems,
-    }) => {
+    }: any) => {
         let idx = viewableItems[0]?.index || 0
         console.log('scroleld to ', idx)
         setIndex(idx)
@@ -44,6 +44,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
     const nextPress = () => {
         console.log('nextpress', index)
         if (index <= (users?.length as number - 2)) {
+            //@ts-ignore
             flatListRef?.current?.scrollToIndex({
                 animated: true,
                 index: index + 1
@@ -57,6 +58,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
         console.log('backPress', index)
 
         if (index >= 1) {
+            //@ts-ignore
             flatListRef?.current?.scrollToIndex({
                 animated: true,
                 index: index - 1
@@ -80,7 +82,9 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                         paddingLeft: theme.dimens.space.lg,
                         paddingRight: theme.dimens.space.lg
                     }}>
-                        <UserCard user={user}
+                        <UserCard
+                            user={user}
+                            api={api}
                             collapsable={true}
                             collapsed={collapsed}
                             onCollapseClick={(show) => {
@@ -100,6 +104,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                 users === null && <Spinner size={40} />
             }
             {
+                //@ts-ignore
                 <FlatList
                     viewabilityConfigCallbackPairs={
                         viewabilityConfigCallbackPairs.current
@@ -117,7 +122,9 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                                 <UserCard
                                     api={api}
                                     collapsed={collapsed}
-                                    user={item.item} platform={user.igUserId ? 'instagram' : 'linkedin'} />
+                                    user={item.item}
+                                    //@ts-ignore
+                                    platform={user.igUserId ? 'instagram' : 'linkedin'} />
                             </CardView>
                         )
                     }} data={users || []} />
@@ -147,6 +154,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                     }} />
             }
 
+
             <HBox style={{
                 backgroundColor: 'transparent',
                 position: 'fixed',
@@ -154,7 +162,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                 left: 0,
                 width: '100%',
                 justifyContent: 'space-between'
-            }}>
+            } as any}>
                 <ButtonView text="Next" icon="arrow-left" onPress={backPress} />
                 <RightIconButton text="Prev" icon="arrow-right" onPress={nextPress} />
             </HBox>
@@ -193,19 +201,19 @@ export function UserCard(props: {
         )
     }
 
-    const openExternal = useCallback(() => {
+    const openExternal = () => {
         console.log("Linking", platform, user?.igUserName || user?.linkedinUserName)
         if (platform == 'instagram' && user?.igUserName) {
             Linking.openURL(`https://www.instagram.com/${user?.igUserName}`)
         } else if (platform == 'linkedin' && user?.linkedinUserName) {
             Linking.openURL(`https://www.linkedin.com/in/${user?.linkedinUserName}`)
         }
-    }, [])
+    }
 
     function loadFull() {
         if (platform == 'instagram') {
             setLoading(true)
-            props.api?.igFindByUsername(user.igUserName)
+            props.api?.igFindByUsername(user.igUserName as string)
                 .then((user) => {
                     setUser(user)
                     setFullyLoaded(true)
