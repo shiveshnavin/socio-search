@@ -45,7 +45,7 @@ jobs:
           ${{ github.event.inputs.apk_upload_url }}
 
     - name: Upload APK as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: built-apk
         path: ./local-builds/*.apk
