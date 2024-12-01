@@ -75,14 +75,19 @@ const resolvers = {
         let li = args.instagram
         response = await Instagram.search(li.text)
       }
+
+      let requestedFeilds = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
       try {
-        let requestedFeilds = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
-        if (requestedFeilds.includes("hdImage") || requestedFeilds.includes("image")) {
+        if (requestedFeilds.includes("hdImage")) {
           if (args.instagram) {
             let usernames = response.map(u => u.igUserName).join(",")
             response = await Instagram.getUsersInBatch(usernames)
           }
         }
+      } catch (e) {
+        console.log("Tolerable error while doing full load", e)
+      }
+      try {
         if (requestedFeilds.includes("faceScore")) {
           let originalFaceUrl = args.instagram?.realFaceUrl
           if (!originalFaceUrl)
@@ -92,6 +97,9 @@ const resolvers = {
           for (let i = 0; i < matchresults.length; i++) {
             response[i].faceScore = matchresults[i].confidence
           }
+          response = response.sort((a, b) => {
+            return a.faceScore - b.faceScore
+          })
         }
       } catch (e) {
         console.log("Tolerable error while doing face match", e)
