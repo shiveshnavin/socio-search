@@ -33,6 +33,8 @@ export class Api {
               igBio
               igBasic
               platform
+              hdImage
+              faceScore
             }
           }
         `,

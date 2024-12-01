@@ -32,6 +32,11 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
         if (targetPlatform == 'instagram') {
             setUsers(null)
             api.searchUserOnInstagram(username)
+                .then(u => {
+                    return u.sort((a, b) => {
+                        return (a.faceScore || 0) - (b.faceScore || 0)
+                    })
+                })
                 .then(setUsers)
                 .catch(e => {
                     setUsers(undefined)
@@ -244,7 +249,7 @@ export function UserCard(props: {
                     <TitleText style={{
                         paddingTop: 15,
                         color: theme.colors.accent
-                    }}>{user.name}</TitleText>
+                    }}>{user.name}{user?.faceScore ? `-${user.faceScore}` : ''}</TitleText>
                 </Pressable>
                 {
                     loading && (

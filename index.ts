@@ -97,9 +97,6 @@ const resolvers = {
           for (let i = 0; i < matchresults.length; i++) {
             response[i].faceScore = matchresults[i].confidence
           }
-          response = response.sort((a, b) => {
-            return a.faceScore - b.faceScore
-          })
         }
       } catch (e) {
         console.log("Tolerable error while doing face match", e)
