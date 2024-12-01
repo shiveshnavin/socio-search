@@ -10,10 +10,12 @@ on:
       profile:
         description: 'Build Profile'
         required: false
+        type: choice
         options:
         - development
         - production
         - preview
+        default: development
       expo_token:
         description: 'Expo Token'
         required: false
