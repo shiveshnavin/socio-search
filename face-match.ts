@@ -2,8 +2,9 @@ import axios, { AxiosRequestConfig } from "axios";
 import { MatchResult } from "./gen/model";
 
 
-export function matchBatchFace(originalFaceUrl: string, threshold: number, faceUrls: string[]): Promise<MatchResult[]> {
+export async function matchBatchFace(originalFaceUrl: string, threshold: number, faceUrls: string[]): Promise<MatchResult[]> {
     let config = {
+        method: 'POST',
         url: 'https://semibit-face-match.hf.space/run/predict',
         data: {
             "data": [
@@ -17,5 +18,6 @@ export function matchBatchFace(originalFaceUrl: string, threshold: number, faceU
             ]
         }
     } as AxiosRequestConfig
-    return axios(config).then(resp => resp.data?.[0] || [])
+    let response = await axios(config)
+    return response.data.data?.[0]
 }
