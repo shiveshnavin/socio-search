@@ -7,6 +7,9 @@ import fs from 'fs'
 import { SQLiteDB } from "multi-db-orm";
 import Linkedin from './modules/linkedin'
 import Instagram from "./modules/instagram";
+import { QuerySearchArgs, SearchParams, User } from "./gen/model";
+import { matchBatchFace } from "./face-match";
+import { GraphQLError } from "graphql";
 
 const db = new SQLiteDB()
 db.create("users_comments", {
@@ -62,16 +65,38 @@ const resolvers = {
   Query: {
     instagramUser: (parent, args, ctx, info) => Instagram.getUser(args.username),
     linkedinUser: (parent, args, ctx, info) => Linkedin.linkedinUser(args.username),
-    search: (parent, args, ctx, info) => {
+    search: async (parent, args: QuerySearchArgs, ctx, info) => {
+      let response: User[] = []
       if (args.linkedin) {
         let li = args.linkedin
-        return Linkedin.search(li.text, li.city, args.skip)
+        response = await Linkedin.search(li.text, li.city, args.skip)
       }
       if (args.instagram) {
         let li = args.instagram
-        return Instagram.search(li.text)
+        response = await Instagram.search(li.text)
       }
-      return []
+      try {
+        let requestedFeilds = info.fieldNodes[0].selectionSet.selections.map(selection => selection.name.value)
+        if (requestedFeilds.includes("hdImage") || requestedFeilds.includes("image")) {
+          if (args.instagram) {
+            let usernames = response.map(u => u.igUserName).join(",")
+            response = await Instagram.getUsersInBatch(usernames)
+          }
+        }
+        if (requestedFeilds.includes("faceScore")) {
+          let originalFaceUrl = args.instagram?.realFaceUrl
+          if (!originalFaceUrl)
+            throw new GraphQLError("Must provide realFaceUrl for faceScore")
+          let urls = response.map(u => (u.hdImage || u.image))
+          let matchresults = await matchBatchFace(originalFaceUrl, 0.7, urls)
+          for (let i = 0; i < matchresults.length; i++) {
+            response[i].faceScore = matchresults[i].confidence
+          }
+        }
+      } catch (e) {
+        console.log("Tolerable error while doing face match", e)
+      }
+      return response
     }
   }
 }

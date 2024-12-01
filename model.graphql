@@ -25,6 +25,8 @@ type User {
   linkedinId: String
   linkedinUserName: String
   linkedinEducation: [LinkedinEducation]
+
+  faceScore: Float
 }
 
 type LinkedinEducation {
@@ -38,4 +40,12 @@ type LinkedinEducation {
 input SearchParams {
   text: String!
   city: String
+  realFaceUrl: String
+}
+
+type MatchResult {
+  status: String!
+  distance: Float!
+  confidence: Float!
+  file: String!
 }
