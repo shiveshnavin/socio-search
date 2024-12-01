@@ -10,15 +10,17 @@ on:
       profile:
         description: 'Build Profile'
         required: false
+        options:
+        - development
+        - production
+        - preview
         default: 'development'
       expo_token:
         description: 'Expo Token'
-        required: true
-        default: 'XXX_EXPO_TOKEN_XXX'
+        required: false
       apk_upload_url:
         description: 'APK Upload URL (optional)'
         required: false
-        default: ''
 
 jobs:
   build-apk:
@@ -37,7 +39,7 @@ jobs:
         # Run the docker command to build the APK
         docker run --rm \
           -v $(pwd)/local-builds:/app/builds \
-          -e EXPO_TOKEN=${{ github.event.inputs.expo_token }} \
+          -e EXPO_TOKEN=${{ github.event.inputs.expo_token || secrets.EXPO_TOKEN }} \
           semibit/react-native-build \
           ${{ github.event.inputs.repo_url }} \
           ${{ github.event.inputs.profile }} \
