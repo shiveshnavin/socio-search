@@ -51,4 +51,5 @@ jobs:
       with:
         name: built-apk
         path: ./local-builds/*.apk
+        retention-days: 1
 
