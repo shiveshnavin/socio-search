@@ -1,11 +1,21 @@
+import axios, { AxiosRequestConfig } from "axios";
 import { MatchResult } from "./gen/model";
 
 
 export function matchBatchFace(originalFaceUrl: string, threshold: number, faceUrls: string[]): Promise<MatchResult[]> {
-    return Promise.resolve(faceUrls.map((url) => ({
-        "status": "match",
-        "distance": 0.4182,
-        "confidence": 58.18,
-        "file": "81m1Of3sVSL._AC_UF10001000_QL80_.jpg"
-    })))
+    let config = {
+        url: 'https://semibit-face-match.hf.space/run/predict',
+        data: {
+            "data": [
+                {
+                    "path": originalFaceUrl
+                },
+                threshold,
+                faceUrls.map((path) => ({
+                    path
+                }))
+            ]
+        }
+    } as AxiosRequestConfig
+    return axios(config).then(resp => resp.data?.[0] || [])
 }
