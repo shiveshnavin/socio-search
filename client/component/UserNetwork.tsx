@@ -33,7 +33,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
             setUsers(null)
             api.searchUserOnInstagram(username, realFaceUrl)
                 .then(u => {
-                    return u.sort((a, b) => {
+                    return u.sort((b, a) => {
                         return (a.faceScore || 0) - (b.faceScore || 0)
                     })
                 })
