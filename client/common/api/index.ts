@@ -5,7 +5,7 @@ import {
   gql,
 } from "@apollo/client";
 import { Platform } from "react-native";
-import { User } from "../../../gen/model";
+import { QuerySearchArgs, User } from "../../../gen/model";
 const client = new ApolloClient({
   uri: Platform.OS == "web" ? "/graph" : "https://socio.semibit.in/graph",
   cache: new InMemoryCache(),
@@ -14,7 +14,7 @@ const client = new ApolloClient({
 export class Api {
   graph = client;
 
-  searchUserOnInstagram(keyword: string) {
+  searchUserOnInstagram(keyword: string, realFaceUrl?: string) {
     console.log("Searching for user", keyword, "on instagram");
 
     return this.graph
@@ -41,8 +41,9 @@ export class Api {
         variables: {
           instagram: {
             text: keyword,
+            realFaceUrl: realFaceUrl
           },
-        },
+        } as QuerySearchArgs,
       })
       .then((response) => response.data.search as User[]);
   }

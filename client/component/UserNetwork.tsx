@@ -28,10 +28,10 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
     ]);
 
     const theme = useContext(ThemeContext)
-    function findUser(username: string, targetPlatform: string) {
+    function findUser(username: string, targetPlatform: string, realFaceUrl?: string) {
         if (targetPlatform == 'instagram') {
             setUsers(null)
-            api.searchUserOnInstagram(username)
+            api.searchUserOnInstagram(username, realFaceUrl)
                 .then(u => {
                     return u.sort((a, b) => {
                         return (a.faceScore || 0) - (b.faceScore || 0)
@@ -155,7 +155,7 @@ export function UserNetwork(props: { user: User, targetPlatform: string }) {
                     }}
                     onPress={() => {
                         if (user && user.name) {
-                            findUser(user.name, props.targetPlatform)
+                            findUser(user.name, props.targetPlatform, user.image as string)
                         }
                     }} />
             }
@@ -249,7 +249,7 @@ export function UserCard(props: {
                     <TitleText style={{
                         paddingTop: 15,
                         color: theme.colors.accent
-                    }}>{user.name}{user?.faceScore ? `-${user.faceScore}` : ''}</TitleText>
+                    }}>{user.name}{user?.faceScore !== undefined ? ` (face score = ${user.faceScore})` : ''}</TitleText>
                 </Pressable>
                 {
                     loading && (
