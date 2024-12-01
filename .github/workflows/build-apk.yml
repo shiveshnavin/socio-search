@@ -40,11 +40,10 @@ jobs:
         # Run the docker command to build the APK
         docker run --rm \
           -v $(pwd)/local-builds:/app/builds \
-          -e EXPO_TOKEN=${{ github.event.inputs.expo_token || secrets.EXPO_TOKEN }} \
           semibit/react-native-build \
           ${{ github.event.inputs.repo_url }} \
           ${{ github.event.inputs.profile }} \
-          ${{ github.event.inputs.expo_token }} \
+          ${{  github.event.inputs.expo_token || secrets.EXPO_TOKEN }} \
           ${{ github.event.inputs.apk_upload_url }}
 
     - name: Upload APK as Artifact
