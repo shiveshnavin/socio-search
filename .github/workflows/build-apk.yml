@@ -19,7 +19,6 @@ on:
       expo_token:
         description: 'Expo Token'
         required: false
-        default: your_expo_token
       apk_upload_url:
         description: 'APK Upload URL (optional)'
         required: false
